@@ -7,7 +7,8 @@ const{
  GraphQLString,
  GraphQLID,
  GraphQLSchema,
- GraphQLInt
+ GraphQLInt,
+ GraphQLList
 }=graphql;
 
 
@@ -18,6 +19,13 @@ const BookType=new GraphQLObjectType({
     id:{type:  GraphQLID},
     name:{type:  GraphQLString},
     group:{type:  GraphQLString},
+    author:{
+      type:AhotrType,
+      resolve(parnt,args){
+        return load.find(Ahotr,{id:parnt.ahotrID})
+      }
+    }
+
   })
 })
 
@@ -27,6 +35,12 @@ const AhotrType=new GraphQLObjectType({
     id:{type:  GraphQLID},
     name:{type:  GraphQLString},
     age:{type:  GraphQLInt},
+    book:{
+      type:new GraphQLList(BookType),
+      resolve(parnt,args){
+        return load.filter(Book,{ahotrID:parnt.id});
+      }
+    }
   })
 })
 
@@ -37,7 +51,7 @@ const rootQuery= new GraphQLObjectType({
     book:{
       type : BookType,
       args:{id:{type:GraphQLID}},
-      resolve(param,args){
+      resolve(parnt,args){
         return load.find(Book,{id:args.id})
       }
     },
